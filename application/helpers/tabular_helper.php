@@ -43,6 +43,7 @@ function transform_headers($array, $readonly = FALSE, $editable = TRUE)
 			'title' => current($element),
 			'switchable' => isset($element['switchable']) ? $element['switchable'] : !preg_match('(^$|&nbsp)', current($element)),
 			'sortable' => isset($element['sortable']) ? $element['sortable'] : current($element) != '',
+			'editable' => isset($element['editable']) ? $element['editable'] : FALSE,
 			'checkbox' => isset($element['checkbox']) ? $element['checkbox'] : FALSE,
 			'class' => isset($element['checkbox']) || preg_match('(^$|&nbsp)', current($element)) ? 'print_hide' : '',
 			'sorter' => isset($element['sorter']) ? $element ['sorter'] : '');
@@ -805,4 +806,5 @@ function get_cash_up_data_row($cash_up)
 		)
 	);
 }
+
 ?>

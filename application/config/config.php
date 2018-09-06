@@ -483,12 +483,16 @@ $config['global_xss_filtering'] = FALSE;
 | 'csrf_regenerate' = Regenerate token on every submission
 | 'csrf_exclude_uris' = Array of URIs which ignore CSRF checks
 */
-$config['csrf_protection'] = TRUE;
+
 $config['csrf_token_name'] = 'csrf_ospos_v3';
 $config['csrf_cookie_name'] = 'csrf_cookie_ospos_v3';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
-$config['csrf_exclude_uris'] = array('login');
+$config['csrf_exclude_uris'] = array(
+	'login',
+	'site/cancel_appointment',
+	'site/schedule_appointment',
+	'site/reschedule/appointment');
 
 /*
 |--------------------------------------------------------------------------

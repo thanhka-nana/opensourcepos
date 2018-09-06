@@ -403,8 +403,47 @@ class Customer extends Person
 		{
 			$this->db->limit($rows, $limit_from);
 		}
-
 		return $this->db->get();
 	}
+
+	function get_customers_in_mailing_list()
+	{
+		$this->db->distinct();
+		$this->db->select(PERSON_ID);
+		$this->db->select(PERSON_EMAIL);
+		$this->db->select(PERSON_FIRST_NAME);
+		$this->db->from(PERSON_TABLE_NAME);
+		$this->db->where(PERSON_IN_MAILING_LIST, true);
+		$this->db->where(PERSON_EMAIL . " <>", "NULL");
+		$this->db->order_by(PERSON_ID, 'asc');
+		$this->db->group_by(PERSON_EMAIL);
+		return $this->db->get();
+	}
+
+	function get_customer_by_email($last_name, $first_name, $email)
+	{
+		$this->db->from('customers');
+		$this->db->join('people', 'people.person_id = customers.person_id');
+		$this->db->where('LOWER(last_name)', strtolower(trim($last_name)));
+		$this->db->where('LOWER(first_name)', strtolower(trim($first_name)));
+		$this->db->where('email', strtolower(trim($email)));
+		return $this->db->get();
+	}
+
+	function get_customer_by_name($last_name, $first_name)
+	{
+		$this->db->from('customers');
+		$this->db->join('people', 'people.person_id = customers.person_id');
+		$this->db->where('LOWER(last_name)', strtolower(trim($last_name)));
+		$this->db->where('LOWER(first_name)', strtolower(trim($first_name)));
+		return $this->db->get();
+	}
+
+	function unsubscribe($id)
+	{
+		$this->db->where('person_id', $id);
+		return $this->db->update('customers', array(PERSON_IN_MAILING_LIST => 0));
+	}
+
 }
 ?>

@@ -45,10 +45,11 @@
     "remarkable-bootstrap-notify": "~3.1.3",
     "js-cookie": "~2.2.1",
     "bootstrap-tagsinput": "~0.8.0",
-    "bootstrap-toggle": "^2.2.2"
+    "bootstrap-toggle": "^2.2.2",
+    "jQuery.editable": "^1.1.2"
   },
   "resolutions": {
-    "chartist": "0.9.8",
+    "chartist": "~0.9.8"
     "jspdf": ">=1.3.4"
   },
   "overrides": {

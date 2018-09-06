@@ -1,0 +1,143 @@
+<div class="field_row clearfix">	
+<?php echo form_label($this->lang->line('common_first_name').':', 'first_name',
+!empty($basic_version) ? array('class'=>'required') : array()); ?>
+	<div class='form_field'>
+	<?php echo form_input(array(
+		'name'=>'first_name',
+		'id'=>'first_name',
+		'value'=>$person_info->first_name)
+	);?>
+	</div>
+</div>
+<div class="field_row clearfix">	
+<?php echo form_label($this->lang->line('common_last_name').':', 'last_name',array('class'=>'required')); ?>
+	<div class='form_field'>
+	<?php echo form_input(array(
+		'name'=>'last_name',
+		'id'=>'last_name',
+		'value'=>$person_info->last_name)
+	);?>
+	</div>
+</div>
+
+<div class="field_row clearfix">	
+<?php echo form_label($this->lang->line('common_gender').':', 'gender', array()); ?>
+	<div class='form_field'>
+	<?php echo form_radio(array(
+		'name'=>'gender',
+		'type'=>'radio',
+		'id'=>'gender',
+		'value'=>1,
+		'checked'=>$person_info->gender === '1')
+	);
+	echo '&nbsp;' . $this->lang->line('common_gender_male') . '&nbsp;';
+	echo form_radio(array(
+		'name'=>'gender',
+		'type'=>'radio',
+		'id'=>'gender',
+		'value'=>0,
+		'checked'=>$person_info->gender === '0')
+	);
+	echo '&nbsp;' . $this->lang->line('common_gender_female');
+	?>
+	</div>
+</div>
+
+<div class="field_row clearfix">	
+<?php echo form_label($this->lang->line('common_email').':', 'email', 
+!empty($basic_version) ? array('class'=>'required') : array()); ?>
+	<div class='form_field'>
+	<?php echo form_input(array(
+		'name'=>'email',
+		'id'=>'email',
+		'value'=>$person_info->email)
+	);?>
+	</div>
+</div>
+
+<div class="field_row clearfix">	
+<?php echo form_label($this->lang->line('common_phone_number').':', 'phone_number'); ?>
+	<div class='form_field'>
+	<?php echo form_input(array(
+		'name'=>'phone_number',
+		'id'=>'phone_number',
+		'value'=>$person_info->phone_number));?>
+	</div>
+</div>
+
+<div class="field_row clearfix">	
+<?php echo form_label($this->lang->line('common_address_1').':', 'address_1'); ?>
+	<div class='form_field'>
+	<?php echo form_input(array(
+		'name'=>'address_1',
+		'id'=>'address_1',
+		'value'=>$person_info->address_1));?>
+	</div>
+</div>
+
+<div class="field_row clearfix">	
+<?php echo form_label($this->lang->line('common_zip').':', 'zip'); ?>
+	<div class='form_field'>
+	<?php echo form_input(array(
+		'name'=>'zip',
+		'id'=>'postcode',
+		'value'=>$person_info->zip));?>
+	</div>
+</div>
+
+<div class="field_row clearfix">	
+<?php echo form_label($this->lang->line('common_city').':', 'city'); ?>
+	<div class='form_field'>
+	<?php echo form_input(array(
+		'name'=>'city',
+		'id'=>'city',
+		'value'=>$person_info->city));?>
+	</div>
+</div>
+
+<?php echo form_input(array(
+	'name'=>'state',
+	'id'=>'state',
+	'type'=>'hidden',
+	'value'=>$person_info->state));?>
+<?php echo form_input(array(
+	'name'=>'country',
+	'id'=>'country',
+	'type'=>'hidden',
+	'value'=>$person_info->country));?>	
+
+<script type='text/javascript' language="javascript">
+//validation and submit handling
+jQuery(document).ready(function($)
+{
+	nominatim.init({
+		fields : {
+			postcode : {  
+				dependencies :  ["postcode", "city", "state", "country"], 
+				response : {  
+					field : 'postalcode', 
+					format: ["postcode", "village|town|hamlet|city_district|city", "state", "country"] 
+				}
+			},
+	
+			city : {
+				dependencies :  ["postcode", "city", "state", "country"], 
+				response : {  
+					format: ["postcode", "village|town|hamlet|city_district|city", "state", "country"] 
+				}
+			},
+	
+			state : {
+				dependencies :  ["state", "country"]
+			},
+	
+			country : {
+				dependencies :  ["state", "country"] 
+			}
+			
+		},
+		language : '<?php echo $this->config->item('language');?>'
+	});
+
+});
+</script>

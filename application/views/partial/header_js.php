@@ -3,9 +3,9 @@
 	var clock_tick = function clock_tick() {
 		setInterval('update_clock();', 1000);
 	}
-
-	// start the clock immediatly
-	clock_tick();
+    
+    // start the clock immediatly
+    $("liveclock").length > 0 && clock_tick();
 
 	var update_clock = function update_clock() {
 		document.getElementById('liveclock').innerHTML = moment().format("<?php echo dateformat_momentjs($this->config->item('dateformat').' '.$this->config->item('timeformat'))?>");

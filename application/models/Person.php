@@ -189,5 +189,24 @@ class Person extends CI_Model
 	{
 		return TRUE;
  	}
+
+	/**
+	 *
+	 * Populate a person object with values found in the POST variable
+	 * @return a populated person
+	 */
+	function get_populated_person($empty_fields=TRUE)
+	{
+		$fields = $this->db->list_fields('people');
+		$person_obj = new stdClass;
+		foreach($fields as $key) {
+			$value = $this->input->post($key, TRUE);
+			if ($empty_fields || !empty($value))
+			{
+				$person_obj->$key = $value;
+			}
+		}
+		return $person_obj;
+	}
 }
 ?>

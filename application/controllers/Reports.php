@@ -62,6 +62,8 @@ class Reports extends Secure_Controller
 		}
 
 		$data = array(
+			'start_date' => $start_date,
+			'end_date' => $end_date,
 			'title' => $this->lang->line('reports_sales_summary_report'),
 			'subtitle' => $this->_get_subtitle_report(array('start_date' => $start_date, 'end_date' => $end_date)),
 			'headers' => $this->xss_clean($model->getDataColumns()),
@@ -72,7 +74,7 @@ class Reports extends Secure_Controller
 		$this->load->view('reports/tabular', $data);
 	}
 
-	//Summary Categories report
+	//Summary categories report
 	public function summary_categories($start_date, $end_date, $sale_type, $location_id = 'all')
 	{
 		$inputs = array('start_date' => $start_date, 'end_date' => $end_date, 'sale_type' => $sale_type, 'location_id' => $location_id);

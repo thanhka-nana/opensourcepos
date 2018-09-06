@@ -345,6 +345,13 @@ function to_datetime($datetime = DEFAULT_DATETIME)
 	return date($config->item('dateformat') . ' ' . $config->item('timeformat'), $datetime);
 }
 
+function parse_date($date)
+{
+	$config = get_instance()->config;
+	$dateTime = DateTime::createFromFormat($config->item('dateformat'), $date);
+	return $dateTime->format('Y-m-d');
+}
+
 function to_currency($number)
 {
 	return to_decimals($number, 'currency_decimals', \NumberFormatter::CURRENCY);

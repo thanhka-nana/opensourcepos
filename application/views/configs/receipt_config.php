@@ -9,7 +9,8 @@
 				<div class='col-xs-2'>
 					<?php echo form_dropdown('receipt_template', array(
 						'receipt_default' => $this->lang->line('config_receipt_default'),
-						'receipt_short' => $this->lang->line('config_receipt_short')
+						'receipt_short' => $this->lang->line('config_receipt_short'),
+						'receipt_runwalk' => $this->lang->line('config_receipt_runwalk')
 					),
 					$this->config->item('receipt_template'), array('class' => 'form-control input-sm'));
 					?>

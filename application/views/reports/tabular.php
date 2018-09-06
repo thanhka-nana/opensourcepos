@@ -56,10 +56,46 @@
 				iconSize: 'sm',
 				paginationVAlign: 'bottom',
 				escape: false
-		});
+        });
 
 
-	});
+        var make_editable = function() {
+            var date = $(this).prev().prev().prev().prev().text();
+            var old_total = $(this).text();
+
+            $(this).editable('click', function(value) {
+                // update row
+                var $this = $(this);
+
+                $.post("<?php echo site_url('corrections/correct_total' )?>", {"value": value.value, "date": date}, function(response) {
+                    $.get("<?php echo site_url('corrections/get_summary_sales_row?date=' )?>" + encodeURIComponent(date), function(response) {
+
+                        var row = $this.parent();
+                        var index = row.data("index");
+                        var table = $("#table").data('bootstrap.table');
+
+                        table.updateRow({index: index, row: response});
+
+                        row = $("table tr").eq(index+1);
+                        // reselect..
+                        //update_sortable_table();
+                        $total = $("td:nth-child(5)", row);
+                        var updated = $total.text() != old_total;
+                        make_editable.call($total);
+                       // table_support.highlight_row(id, '#e1ffdd')
+                    });
+                    // load summary data back in
+                    $('#report_summary').load("<?php echo site_url("corrections/get_summary_totals_sales/$start_date/$end_date/0" ); ?>");
+                });
+
+            });
+        };
+
+        $("tbody td:nth-child(5)").each(make_editable);
+
+
+
+    });
 </script>
 
 <?php $this->load->view("partial/footer"); ?>

@@ -62,6 +62,7 @@
 		<script src="bower_components/js-cookie/src/js.cookie.js"></script>
 		<script src="bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js"></script>
 		<script src="bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+		<script src="bower_components/jQuery.editable/jquery.editable.js"></script>
 		<!-- endbower -->
 		<!-- start js template tags -->
 		<script type="text/javascript" src="js/clipboard.min.js"></script>
@@ -107,7 +108,7 @@
 				</div>
 
 				<div class="navbar-right" style="margin:0">
-					<?php echo anchor('home/change_password/'.$user_info->person_id, $user_info->first_name . ' ' . $user_info->last_name, array('class' => 'modal-dlg', 'data-btn-submit' => $this->lang->line('common_submit'), 'title' => $this->lang->line('employees_change_password'))); ?>
+					<?php echo anchor('employees/change_password/'.$user_info->person_id, $user_info->first_name . ' ' . $user_info->last_name, array('class' => 'modal-dlg', 'data-btn-submit' => 'Submit', 'title' => $this->lang->line('employees_change_password'))); ?>
 					<?php echo '  |  ' . ($this->input->get('debug') == 'true' ? $this->session->userdata('session_sha1') . '  |  ' : ''); ?>
 					<?php echo anchor('home/logout', $this->lang->line('common_logout')); ?>
 				</div>
