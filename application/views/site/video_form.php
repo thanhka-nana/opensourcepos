@@ -6,7 +6,8 @@
             $('#dropzone form').toggleClass("dropzone").dropzone({
                 url: "/site/handle_video_upload",
                 maxFiles: 3,
-                acceptedFiles: "video/mp4, video/avi",
+                acceptedFiles: "video/*",
+                capture: "camcorder",
                 params: function() {
                     return {
                         "<?=PERSON_FIRST_NAME?>" : $('#<?=PERSON_FIRST_NAME?>').val(),

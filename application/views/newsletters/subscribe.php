@@ -1,7 +1,3 @@
-<p>
-Blijf op de hoogte van acties en promoties in onze winkel, en schrijf je in op onze 
-halfjaarlijkse <strong>nieuwsbrief!</strong>
-</p>
 <form id="newsletter_form" method="post" action="<?= site_url('site/subscribe');?>">
 <ul id="error_message_box">
 	<?php 
@@ -24,7 +20,7 @@ $this->load->view('people/form_public_info', array('person_info' => (object) $pe
 <?=$captcha['image']?>
 <?=form_hidden($this->security->get_csrf_token_name(), $this->security->get_csrf_hash())?>
 <div class="form_field">
-<?=form_input(array("name" => CAPTCHA, "size" => "20"))?>
+<?=form_input(array("name" => CAPTCHA, "size" => "25"))?>
 </div>
 </div>
 

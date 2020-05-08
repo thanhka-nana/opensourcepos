@@ -10,6 +10,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 RUN a2enmod rewrite
 RUN docker-php-ext-install mysqli bcmath intl gd
 RUN echo "date.timezone = \"\${PHP_TIMEZONE}\"" > /usr/local/etc/php/conf.d/timezone.ini
+RUN sed -i s/2M/20M/g /usr/local/etc/php/php.ini-*
 RUN echo -e “$(hostname -i)\t$(hostname) $(hostname).localhost” >> /etc/hosts
 
 WORKDIR /app

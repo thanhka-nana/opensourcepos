@@ -79,19 +79,25 @@ class Site extends CI_Controller
 
             $config = array(
                 'upload_path' => $gait_video_dir,
-                'allowed_types' => 'mp4|avi',
-                'max_size' => '10000',
+                'allowed_types' => 'video/*',
+                'max_size' => '16384',
                 'file_name' => $gait_video_filename
             );
-
-            $this->session->userdata(GAIT_VIDEO_PATH, $gait_video_path);
 
             $this->load->library('upload', $config);
             if (!$this->upload->do_upload("file"))
             {
-                return $this->lang->line('upload_unable_to_write_file');
+                $this->output->set_status_header(400);
+                echo $this->upload->display_errors();
             }
-            return strlen($this->upload->display_errors()) == 0 || !strcmp($this->upload->display_errors(), $this->lang->line('upload_no_file_selected'));
+            else
+            {
+                if (strlen($this->upload->display_errors()) == 0)
+                {
+                    $this->output->set_status_header(400);
+                    echo $this->lang->line('upload_no_file_selected');
+                }
+            }
         }
         else
         {
@@ -116,7 +122,7 @@ class Site extends CI_Controller
         $this->form_validation->set_rules(PERSON_ZIP, "lang:common_zip", "trim|required");
         $this->form_validation->set_rules(PERSON_CITY, "lang:common_city", "trim|required");
         $this->form_validation->set_rules(PERSON_EMAIL, "lang:common_email", "trim|required|valid_email");
-        $this->form_validation->set_rules(GAIT_VIDEO, "lang:existing_customer", "required");
+        $this->form_validation->set_rules(EXISTING_CUSTOMER, "lang:existing_customer", "required");
         $this->form_validation->set_rules(SHOE_SIZE, "lang:shoe_size", "trim|required|numeric|greater_than_equal_to[35]|less_than_equal_to[49]");
         $this->form_validation->set_rules(GAIT_VIDEO, "lang:gait_video", "callback_gait_video_check");
 
@@ -244,13 +250,14 @@ class Site extends CI_Controller
 		}
 		else
 		{
-			$subject = "Vraag van op de site ";
+			$name = $this->input->post(PERSON_NAME, TRUE);
+			$subject = "Vraag van $name ";
 			$mail_body = "Er is een contactformulier vanaf je website verstuurd.<br>".
 			"De volgende gegevens werden ingevoerd:<br><br>".
-			"Naam:  " . $this->input->post(PERSON_NAME, TRUE) ."<br>". 
+			"Naam:  " . $name ."<br>".
 			"E-mailadres: " . $this->input->post(PERSON_EMAIL, TRUE) ."<br><br>".
 			"Bericht: " . htmlspecialchars($this->input->post(PERSON_COMMENTS, TRUE)) ."<br><br>".
-			"Je kan op deze mail antwoorden door gewoon op reply te drukken."; 
+			"Je kan op deze mail antwoorden door op reply te drukken.";
 
 			$this->email->send_mail($subject, $mail_body, NULL, $this->input->post(PERSON_NAME, TRUE), $this->input->post(PERSON_EMAIL, TRUE));
 
@@ -316,7 +323,7 @@ class Site extends CI_Controller
 		return create_captcha(array(
 			'word'   => $word,
 			'img_path'  => './captcha/',
-			'img_url'   => base_url() . 'captcha/',
+			'img_url'   => '/captcha/',
 			'font_path'    => './system/fonts/texb',
 			'img_width'    => 110,
 			'img_height' => '30',
@@ -506,7 +513,7 @@ class Site extends CI_Controller
 
 	function gait_video_check($filename)
     {
-        if (!$this->input->post('existing_customer') && !$this->input->post(GAIT_VIDEO))
+        if (!$this->input->post('existing_customer') && !isset($_SESSION[GAIT_VIDEO_PATH]))
         {
             $this->form_validation->set_message('gait_video_check', $this->lang->line('gait_video_required'));
             return false;

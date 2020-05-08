@@ -29,5 +29,5 @@ $lang["existing_customer_description"] = "Bent u reeds klant?";
 $lang["existing_customer"] = "Reeds klant";
 $lang["gait_video_customer_name_required"] = "Vul eerst uw naam en voornaam in alvorens een opname te uploaden.";
 $lang["gait_video"] = "Opname";
-$lang["gait_video_required"] = "Opname is vereist";
+$lang["gait_video_required"] = "Het Opname-veld is verplicht";
 $lang["advice_processed_subject"] = "Aanvraag online advies %s";

@@ -68,8 +68,7 @@
 <?php echo form_label($this->lang->line('common_phone_number').':', PERSON_TELEPHONE, $this->CI->is_required(PERSON_TELEPHONE)); ?>
 	<div class='form_field'>
 	<?php echo form_input(array(
-        'type' => 'tel',
-        'pattern' => "^\+32(?#8DIGIT)(?:1[0-69]|[23][2-8]|4[236-9]|5\d|6[01345789]|7[01689]|8[0-79]|9[012])\d{6}$",
+		'type' => 'text',
 		'name'=>'phone_number',
 		'id'=>'phone_number',
 		'size' => 25,
