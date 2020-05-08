@@ -17,7 +17,7 @@ halfjaarlijkse <strong>nieuwsbrief!</strong>
 <legend><?php echo $this->lang->line('common_fields_legend'); ?></legend>
 
 <?php
-$this->load->view('people/form_public_info', $data);
+$this->load->view('people/form_public_info', array('person_info' => (object) $person_info));
 ?>
 
 <div class="field_row clearfix">

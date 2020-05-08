@@ -1,6 +1,6 @@
 <?php 
 
-$lang["common_address_1"] = "Adres 1";
+$lang["common_address_1"] = "Adres";
 $lang["common_address_2"] = "Adres 2";
 $lang["common_city"] = "Stad";
 $lang["common_close"] = "Sluit";
@@ -18,7 +18,7 @@ $lang["common_edit"] = "bewerk";
 $lang["common_email"] = "Email";
 $lang["common_email_invalid_format"] = "Je moet een geldig email adres invullen.";
 $lang["common_export_csv"] = "CSV Export";
-$lang["common_export_csv_no"] = "No";
+$lang["common_export_csv_no"] = "Neen";
 $lang["common_export_csv_yes"] = "Ja";
 $lang["common_fields_required_message"] = "Velden met een * moeten ingevuld worden";
 $lang["common_first_name"] = "Voornaam";
@@ -72,3 +72,5 @@ $lang["common_welcome_message"] = "Welkom in OSPOS, klik beneden een module aan 
 $lang["common_yes"] = "Ja";
 $lang["common_you_are_using_ospos"] = "U gebruikt Open Source Point Of Sale Version";
 $lang["common_zip"] = "Postcode";
+$lang["common_no"] = "Neen";
+$lang["common_yes"] = "Ja";

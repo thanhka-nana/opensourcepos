@@ -21,6 +21,7 @@
 		<link rel="stylesheet" href="bower_components/chartist-plugin-tooltip/dist/chartist-plugin-tooltip.css" />
 		<link rel="stylesheet" href="bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" />
 		<link rel="stylesheet" href="bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css" />
+		<link rel="stylesheet" href="bower_components/dropzone/dist/min/dropzone.min.css" />
 		<!-- endbower -->
 		<!-- start css template tags -->
 		<link rel="stylesheet" type="text/css" href="css/bootstrap.autocomplete.css"/>
@@ -63,6 +64,7 @@
 		<script src="bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js"></script>
 		<script src="bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
 		<script src="bower_components/jQuery.editable/jquery.editable.js"></script>
+		<script src="bower_components/dropzone/dist/min/dropzone.min.js"></script>
 		<!-- endbower -->
 		<!-- start js template tags -->
 		<script type="text/javascript" src="js/clipboard.min.js"></script>

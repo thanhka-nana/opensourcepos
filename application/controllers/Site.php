@@ -15,6 +15,7 @@ define("PERSON_NAME", "last_name");
 define("PERSON_TYPE", "type");
 // define("PERSON_NAME_FIELD", PERSON_TABLE_NAME . "." . PERSON_NAME);
 define("PERSON_FIRST_NAME", "first_name");
+define("PERSON_LAST_NAME", "last_name");
 define("PERSON_EMAIL", "email");
 define("PERSON_IN_MAILING_LIST", "in_mailing_list");
 define("PERSON_CONSENT", "consent");
@@ -24,25 +25,166 @@ define("PERSON_ADDRESS_2", "address_2");
 define("PERSON_COMMENTS", "comments");
 define("PERSON_COUNTRY", "country");
 define("PERSON_STATE", "state");
+define("PERSON_CITY", "city");
 define("PERSON_ZIP", "zip");
+
+define("EXISTING_CUSTOMER", "existing_customer");
+define("SHOE_MODEL", "shoe_model");
+define("SHOE_SIZE", "shoe_size");
+define("GAIT_VIDEO", "gait_video");
+define("GAIT_VIDEO_PATH", "gait_video_path");
 
 /** some array keys */
 define("CAPTCHA", "captcha");
 define ("GIF_PIXEL", "R0lGODlhAQABAJAAAP8AAAAAACH5BAUQAAAALAAAAAABAAEAAAICBAEAOw==");
 
-class Site extends CI_Controller {
+class Site extends CI_Controller
+{
 
-	function __construct()
-	{
-		parent::__construct();	
-		$this->load->library('email');
-		$this->load->library('form_validation');
-		$this->load->model('Analysis');
-		/* Set locale to Dutch */
+    public $CI = NULL;
+
+    function __construct()
+    {
+        parent::__construct();
+        $this->CI = & get_instance();
+        $this->load->library('email');
+        $this->load->library('form_validation');
+        $this->load->model('Analysis');
+        /* Set locale to Dutch */
         setlocale(LC_ALL, 'nl_BE');
-	}
-	
-	function cancel_appointment()
+    }
+
+    function _gait_video_dir()
+    {
+        return "./uploads";
+    }
+
+    function _gait_video_filename($first_name, $last_name, $extension)
+    {
+        return "${first_name}_${last_name}.$extension";
+    }
+
+    function handle_video_upload()
+    {
+        $first_name = $this->input->post(PERSON_FIRST_NAME);
+        $last_name = $this->input->post(PERSON_LAST_NAME);
+        if (!empty($first_name) && !empty($last_name))
+        {
+            $filename = $_FILES["file"]["name"];
+            $file_ext = pathinfo($filename,PATHINFO_EXTENSION);
+
+            $gait_video_dir = $this->_gait_video_dir();
+            $gait_video_filename = $this->_gait_video_filename($first_name, $last_name, $file_ext);
+            $gait_video_path = $gait_video_dir . DIRECTORY_SEPARATOR . $gait_video_filename;
+
+            $config = array(
+                'upload_path' => $gait_video_dir,
+                'allowed_types' => 'mp4|avi',
+                'max_size' => '10000',
+                'file_name' => $gait_video_filename
+            );
+
+            $this->session->userdata(GAIT_VIDEO_PATH, $gait_video_path);
+
+            $this->load->library('upload', $config);
+            if (!$this->upload->do_upload("file"))
+            {
+                return $this->lang->line('upload_unable_to_write_file');
+            }
+            return strlen($this->upload->display_errors()) == 0 || !strcmp($this->upload->display_errors(), $this->lang->line('upload_no_file_selected'));
+        }
+        else
+        {
+            $this->output->set_status_header(400);
+            echo $this->lang->line("gait_video_customer_name_required");
+        }
+    }
+
+    function video_form()
+    {
+        $this->load->view('site/video_form');
+    }
+
+    function advice_form($embed_page = 0)
+    {
+        $data['embed_page'] = $embed_page;
+
+        // set validation rules for subscription
+        $this->form_validation->set_rules(PERSON_NAME, "lang:common_last_name", "trim|required|min_length[5]|max_length[50]");
+        $this->form_validation->set_rules(PERSON_FIRST_NAME, "lang:common_first_name", "trim|required");
+        $this->form_validation->set_rules(PERSON_ADDRESS, "lang:common_address_1", "trim|required");
+        $this->form_validation->set_rules(PERSON_ZIP, "lang:common_zip", "trim|required");
+        $this->form_validation->set_rules(PERSON_CITY, "lang:common_city", "trim|required");
+        $this->form_validation->set_rules(PERSON_EMAIL, "lang:common_email", "trim|required|valid_email");
+        $this->form_validation->set_rules(GAIT_VIDEO, "lang:existing_customer", "required");
+        $this->form_validation->set_rules(SHOE_SIZE, "lang:shoe_size", "trim|required|numeric|greater_than_equal_to[35]|less_than_equal_to[49]");
+        $this->form_validation->set_rules(GAIT_VIDEO, "lang:gait_video", "callback_gait_video_check");
+
+        $person_data = (array) $this->Person->get_populated_person(TRUE);
+
+        if ($this->form_validation->run() == FALSE)
+        {
+            $data['person_info'] = $person_data;
+            $data['error_messages'] = $this->form_validation->get_error_messages();
+            $this->load->view('site/advice_form', $data);
+        }
+        else
+        {
+            $customer_data = array(PERSON_IN_MAILING_LIST => 1, PERSON_CONSENT => 1);
+
+            if ($this->input->post(EXISTING_CUSTOMER))
+            {
+                $customers = $this->Customer->get_customer_by_name($this->input->post(PERSON_LAST_NAME, TRUE),
+                    $this->input->post(PERSON_FIRST_NAME, TRUE))->result_array();
+            }
+            else
+            {
+                $customers = $this->Customer->get_customer_by_email($this->input->post(PERSON_LAST_NAME),
+                    $this->input->post(PERSON_FIRST_NAME), $this->input->post(PERSON_EMAIL))->result_array();
+            }
+
+            $person_id = count($customers) ? $customers[0]['person_id'] : FALSE;
+
+            unset($person_data['comments'], $person_data[PERSON_ID]);
+            $customer_data = array('deleted' => 0);
+
+            $analysis_data = array('start_date' => date('Y-m-d G:i:s'),
+                'creation_date' => date('Y-m-d G:i:s'),
+                'comments' => $this->input->post(ANALYSIS_COMMENTS),
+                'person_id' => $customers[0]['person_id']);
+
+            //TODO create new model for recording
+            //TODO insert suspended sale for this customer (and check how to continue flow using quotes)
+
+            if ($this->Customer->save_customer($person_data, $customer_data, $person_id) &&
+                    $this->Analysis->save($analysis_data))
+            {
+               $email_data = array_merge($person_data, $analysis_data);
+               // send mail to notify admin about user subscription
+               $this->_send_advice_processed_mail($email_data);
+               unset($_SESSION[GAIT_VIDEO_PATH]);
+               $data['themessage'] = "Je gegevens werden goed verzonden.";
+            }
+            else
+            {
+                // redirect session variable not set, could be a naked post to this method
+                $data['themessage'] = "Er is iets misgelopen bij het registreren van uw gegevens. Probeer het later nog eens opnieuws.";
+            }
+            $this->load->view('site/formsent', $data);
+        }
+    }
+
+    function _send_advice_processed_mail($email_data)
+    {
+        $mail_body = $this->load->view('site/advice_processed_mail', $email_data, TRUE);
+        $fullname = $email_data[ PERSON_NAME ] . " " . $email_data[ PERSON_FIRST_NAME ];
+        $subject = sprintf($this->lang->line("advice_processed_subject"), $fullname);
+        $this->email->send_mail($subject, $mail_body, $this->email->feedback_address, $fullname, $email_data[PERSON_EMAIL]);
+        //echo $this->email->print_debugger();
+    }
+
+
+    function cancel_appointment()
 	{
         $analysis_data = array('appointment_cancelled' => TRUE);
 		$success = $this->Analysis->save_by_appointment_extref($analysis_data, $this->input->post('appointment_extref'));
@@ -221,8 +363,6 @@ class Site extends CI_Controller {
 	
 	function _send_feedback_processed_mail($analysis)
 	{
-		$creation_date = new DateTime($analysis[ANALYSIS_CREATION_DATE]);
-		$feedback_date = new DateTime($analysis[ANALYSIS_FEEDBACK_DATE]);
 		$analysis[ ANALYSIS_START_DATE ] = $feedback_date;
 		$interval = $creation_date->diff($feedback_date);
 		$analysis[ 'interval' ] = $interval->format('%r%a');
@@ -319,9 +459,11 @@ class Site extends CI_Controller {
 		$this->form_validation->set_rules(PERSON_FIRST_NAME, "lang:common_first_name", "trim|required");
 		$this->form_validation->set_rules(CAPTCHA, "lang:common_captcha", "required|callback_captcha_check");
 
-		if ($this->form_validation->run() == FALSE)
+        $person_data = (array) $this->Person->get_populated_person(TRUE);
+
+        if ($this->form_validation->run() == FALSE)
 		{
-			$data['person_info'] = $this->Person->get_info(FALSE);
+		    $data['person_info'] = $person_data;
 			$data['error_messages'] = $this->form_validation->get_error_messages();
 			$this->load->view('newsletters/subscribe', $data);
 		}
@@ -362,6 +504,16 @@ class Site extends CI_Controller {
 		return true;
 	}
 
+	function gait_video_check($filename)
+    {
+        if (!$this->input->post('existing_customer') && !$this->input->post(GAIT_VIDEO))
+        {
+            $this->form_validation->set_message('gait_video_check', $this->lang->line('gait_video_required'));
+            return false;
+        }
+        return true;
+    }
+
 	function captcha_check($captcha)
 	{
 		if($captcha != $this->session->flashdata(CAPTCHA))
@@ -371,5 +523,10 @@ class Site extends CI_Controller {
 		}
 		return true;
 	}
+
+    public function is_required($field) {
+        return ($this->form_validation->is_required($field)) ? array('class'=>'required'): array();
+        //return array('class'=>'required');
+    }
 
 }

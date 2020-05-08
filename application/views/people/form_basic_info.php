@@ -29,7 +29,6 @@
 			<?php echo form_radio(array(
 					'name'=>'gender',
 					'type'=>'radio',
-					'id'=>'gender',
 					'value'=>1,
 					'checked'=>$person_info->gender === '1')
 					); ?> <?php echo $this->lang->line('common_gender_male'); ?>
@@ -38,12 +37,18 @@
 			<?php echo form_radio(array(
 					'name'=>'gender',
 					'type'=>'radio',
-					'id'=>'gender',
 					'value'=>0,
 					'checked'=>$person_info->gender === '0')
 					); ?> <?php echo $this->lang->line('common_gender_female'); ?>
+        </label>
+        <label class="radio-inline">
+            <?php echo form_radio(array(
+                    'name'=>'gender',
+                    'type'=>'radio',
+                    'value'=>2,
+                    'checked'=>$person_info->gender === '2')
+                    ); ?> <?php echo $this->lang->line('common_gender_undefined'); ?>
 		</label>
-
 	</div>
 </div>
 
@@ -68,6 +73,7 @@
 		<div class="input-group">
 			<span class="input-group-addon input-sm"><span class="glyphicon glyphicon-phone-alt"></span></span>
 			<?php echo form_input(array(
+			        'type' => 'tel',
 					'name'=>'phone_number',
 					'id'=>'phone_number',
 					'class'=>'form-control input-sm',

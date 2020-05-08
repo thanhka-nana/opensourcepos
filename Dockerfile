@@ -18,8 +18,8 @@ RUN ln -s /app/*[^public] /var/www && rm -rf /var/www/html && ln -nsf /app/publi
 RUN chmod -R 750 /app/public/uploads /app/application/logs && chown -R www-data:www-data /app/public /app/application
 
 FROM ospos AS ospos_test
- 
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+COPY --from=jekkos/composer /usr/bin/composer /usr/bin/composer
  
 RUN apt-get install -y libzip-dev wget git
 RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /bin/wait-for-it.sh && chmod +x /bin/wait-for-it.sh
