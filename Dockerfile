@@ -10,7 +10,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 RUN a2enmod rewrite
 RUN docker-php-ext-install mysqli bcmath intl gd
 RUN echo "date.timezone = \"\${PHP_TIMEZONE}\"" > /usr/local/etc/php/conf.d/timezone.ini
-RUN sed -i s/2M/20M/g /usr/local/etc/php/php.ini-*
+RUN { \
+        echo 'upload_max_filesize=38M'; \
+        echo 'post_max_size=38M'; \
+        echo 'max_execution_time=600'; \
+    } > /usr/local/etc/php/conf.d/filelimits.ini
 RUN echo -e “$(hostname -i)\t$(hostname) $(hostname).localhost” >> /etc/hosts
 
 WORKDIR /app

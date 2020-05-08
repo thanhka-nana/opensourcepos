@@ -1,4 +1,4 @@
-<span class="tekst">Je kan bij <strong>RunWalk</strong> vrijblijvend terecht met al je vragen door het onderstaande formulier in te vullen. Wij doen ons best om u zo snel mogelijk te beantwoorden <br><br>Bedankt!<br>
+<span class="tekst">Je kan bij <strong>RunWalk</strong> vrijblijvend terecht met al je vragen door het onderstaande formulier in te vullen. Wij doen ons best om u zo snel mogelijk te beantwoorden
 <br>
 
 <form id="contact_form" method="post" action="<?= site_url('site/contact');?>" accept-charset="UTF-8">

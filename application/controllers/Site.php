@@ -79,7 +79,7 @@ class Site extends CI_Controller
 
             $config = array(
                 'upload_path' => $gait_video_dir,
-                'allowed_types' => 'video/*',
+                'allowed_types' => 'mp4|avi|3gp|webm|ogg|mpg|mov',
                 'max_size' => '16384',
                 'file_name' => $gait_video_filename
             );
@@ -92,10 +92,14 @@ class Site extends CI_Controller
             }
             else
             {
-                if (strlen($this->upload->display_errors()) == 0)
+                if (strlen($this->upload->display_errors()) > 0)
                 {
                     $this->output->set_status_header(400);
                     echo $this->lang->line('upload_no_file_selected');
+                }
+                else
+                {
+                    $_SESSION[GAIT_VIDEO_PATH] = $gait_video_path;
                 }
             }
         }
@@ -136,7 +140,7 @@ class Site extends CI_Controller
         }
         else
         {
-            $customer_data = array(PERSON_IN_MAILING_LIST => 1, PERSON_CONSENT => 1);
+            $customer_data = array(PERSON_CONSENT => 1);
 
             if ($this->input->post(EXISTING_CUSTOMER))
             {
@@ -150,6 +154,12 @@ class Site extends CI_Controller
             }
 
             $person_id = count($customers) ? $customers[0]['person_id'] : FALSE;
+
+            $person_data = array_merge($person_data, array(
+                PERSON_TYPE => 0,
+                PERSON_IN_MAILING_LIST => 1,
+                'version' => 0
+            ));
 
             unset($person_data['comments'], $person_data[PERSON_ID]);
             $customer_data = array('deleted' => 0);
@@ -185,7 +195,7 @@ class Site extends CI_Controller
         $mail_body = $this->load->view('site/advice_processed_mail', $email_data, TRUE);
         $fullname = $email_data[ PERSON_NAME ] . " " . $email_data[ PERSON_FIRST_NAME ];
         $subject = sprintf($this->lang->line("advice_processed_subject"), $fullname);
-        $this->email->send_mail($subject, $mail_body, $this->email->feedback_address, $fullname, $email_data[PERSON_EMAIL]);
+        $this->email->send_mail($subject, $mail_body, NULL, $fullname, $email_data[PERSON_EMAIL]);
         //echo $this->email->print_debugger();
     }
 
@@ -338,7 +348,7 @@ class Site extends CI_Controller
 		$this->form_validation->set_rules(ANALYSIS_SCORE, "lang:score", "required|callback_score_check");
 		$this->form_validation->set_error_delimiters('<div class="boldred error">', '</div>');
 		$analysis = $this->Analysis->get_analysis_by_token_id($feedback_token);
-		if (sizeof($analysis) > 0 && is_null($analysis[ ANALYSIS_SCORE ]))
+		if ($analysis != NULL && is_null($analysis[ ANALYSIS_SCORE ]))
 		{
 			if ($this->form_validation->run() == FALSE)
 			{
@@ -370,6 +380,8 @@ class Site extends CI_Controller
 	
 	function _send_feedback_processed_mail($analysis)
 	{
+		$creation_date = new DateTime($analysis[ANALYSIS_CREATION_DATE]);
+		$feedback_date = new DateTime($analysis[ANALYSIS_FEEDBACK_DATE]);
 		$analysis[ ANALYSIS_START_DATE ] = $feedback_date;
 		$interval = $creation_date->diff($feedback_date);
 		$analysis[ 'interval' ] = $interval->format('%r%a');
@@ -476,7 +488,7 @@ class Site extends CI_Controller
 		}
 		else
 		{
-			$customer_data = array(PERSON_IN_MAILING_LIST => 1, PERSON_CONSENT => 1);
+			$customer_data = array(PERSON_CONSENT => 1);
 			$person_data = (array) $this->Person->get_populated_person(FALSE);
 			if ($this->Customer->save_customer($person_data, $customer_data))
 			{

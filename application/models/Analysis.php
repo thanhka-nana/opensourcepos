@@ -39,22 +39,22 @@ class Analysis extends CI_Model {
 		$this->db->select("an1.*");
 		$this->db->select("an2.creation_date AS " . ANALYSIS_CREATION_DATE);
 		$this->db->select(PERSON_TABLE_NAME . ".*");
-	       	$this->db->from(ANALYSIS_TABLE_NAME . " an1", FALSE);
-    	   	$this->db->join(PERSON_TABLE_NAME, PERSON_PK . " = an1." . ANALYSIS_PERSON);
-    	   	$this->db->join(ANALYSIS_TABLE_NAME . " an2", "an1." . ANALYSIS_FEEDBACK_ID . " = an2." . ANALYSIS_ID);
-    		$this->db->where("an1." . ANALYSIS_FEEDBACK_TOKEN, NULL);
-    		$this->db->where("an1." . ANALYSIS_FEEDBACK_ID . " IS NOT NULL");
-    		$this->db->where("an1." . ANALYSIS_START_DATE ." < NOW()");
-    		return $this->db->get()->result_array();
+		$this->db->from(ANALYSIS_TABLE_NAME . " an1", FALSE);
+		$this->db->join(PERSON_TABLE_NAME, PERSON_PK . " = an1." . ANALYSIS_PERSON);
+		$this->db->join(ANALYSIS_TABLE_NAME . " an2", "an1." . ANALYSIS_FEEDBACK_ID . " = an2." . ANALYSIS_ID);
+		$this->db->where("an1." . ANALYSIS_FEEDBACK_TOKEN, NULL);
+		$this->db->where("an1." . ANALYSIS_FEEDBACK_ID . " IS NOT NULL");
+		$this->db->where("an1." . ANALYSIS_START_DATE ." < NOW()");
+		return $this->db->get()->result_array();
 	}
 	
 	function feedback_exists($feedback_id) 
 	{
 		$this->db->select(ANALYSIS_TABLE_NAME . ".*");
-	    	$this->db->select(ANALYSIS_FORMATTED_DATE, FALSE);
-	       	$this->db->from(ANALYSIS_TABLE_NAME);
-	    	$this->db->where(ANALYSIS_FEEDBACK_ID, $feedback_id);
-	    	return $this->db->get()->row_array();	
+		$this->db->select(ANALYSIS_FORMATTED_DATE, FALSE);
+		$this->db->from(ANALYSIS_TABLE_NAME);
+		$this->db->where(ANALYSIS_FEEDBACK_ID, $feedback_id);
+		return $this->db->get()->row_array();
 	}
 	
 	function get_analysis_by_token_id($feedback_token) 
@@ -62,12 +62,12 @@ class Analysis extends CI_Model {
 		$this->db->select("an1.*");
 		$this->db->select("an2.start_date AS " . ANALYSIS_START_DATE);
 		$this->db->select(PERSON_TABLE_NAME . ".*");
-    	   	$this->db->from(ANALYSIS_TABLE_NAME . " an1", FALSE);
-    	   	$this->db->join(PERSON_TABLE_NAME, PERSON_PK . " = an1." . ANALYSIS_PERSON);
-    	   	$this->db->join(ANALYSIS_TABLE_NAME . " an2", "an1." . ANALYSIS_FEEDBACK_ID . " = an2." . ANALYSIS_ID);
-    		$this->db->where("an1." . ANALYSIS_FEEDBACK_TOKEN, $feedback_token);
-    		$this->db->where("an1." . ANALYSIS_START_DATE ." <", "NOW()");
-    		return $this->db->get()->row_array();
+		$this->db->from(ANALYSIS_TABLE_NAME . " an1", FALSE);
+		$this->db->join(PERSON_TABLE_NAME, PERSON_PK . " = an1." . ANALYSIS_PERSON);
+		$this->db->join(ANALYSIS_TABLE_NAME . " an2", "an1." . ANALYSIS_FEEDBACK_ID . " = an2." . ANALYSIS_ID);
+		$this->db->where("an1." . ANALYSIS_FEEDBACK_TOKEN, $feedback_token);
+		$this->db->where("an1." . ANALYSIS_START_DATE ." <", "NOW()");
+		return $this->db->get()->row_array();
 	}
 	
 	function get_analysis_by_feedback_id($feedback_id) 
